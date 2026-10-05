@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Perimeter of 1s – Interview Intuition Visualizer</title>
+<style>
+:root{--bg:#0b0c0f;--pn:#14161a;--ln:#2a2e35;--fg:#ecebe6;--mu:#8a8a90;--ac:#5eead4;--ac2:#14b8a6;--rd:#ff6b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0c0f}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 Inter,system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:clamp(12px,3vw,28px)}
+h1{font-size:clamp(20px,4.5vw,30px);margin:0 0 4px}h2{font-size:clamp(17px,3.6vw,22px);margin:28px 0 8px;color:var(--ac)}
+.sub{color:var(--mu);margin:0 0 16px;font-size:14px}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(12px,2vw,22px)}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:clamp(10px,2.5vw,18px)}
+#stage{width:100%;height:auto;max-height:min(62vh,520px);display:block}
+.cnt{display:flex;align-items:baseline;gap:10px;position:relative;flex-wrap:wrap}
+.cnt small{color:var(--mu);letter-spacing:.15em;font-size:12px}
+#pv{font-size:clamp(36px,9vw,56px);font-weight:800;color:var(--ac);line-height:1;transition:transform .25s}
+#pv.b{transform:scale(1.18)}
+#dl{font-size:clamp(20px,5vw,28px);font-weight:700;opacity:0;transition:opacity .3s}
+#dl.s{opacity:1}
+#txt{font-size:clamp(16px,3.8vw,20px);min-height:5.5em;margin:10px 0}
+#note{border-left:3px solid var(--ac);padding:8px 12px;background:#0e1f1d;border-radius:0 10px 10px 0;color:var(--fg);font-size:15px;display:none;white-space:pre-line}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button,select{background:#1b1e24;color:var(--fg);border:1px solid var(--ln);border-radius:10px;padding:10px 14px;font:inherit;font-size:14px;cursor:pointer}
+button.p{background:var(--ac);color:#06201c;border-color:var(--ac);font-weight:700}
+button:hover{border-color:var(--ac)}
+#bar{height:4px;background:var(--ln);border-radius:4px;margin-top:12px}#bar i{display:block;height:100%;width:0;background:var(--ac);border-radius:4px;transition:width .3s}
+#stp{color:var(--mu);font-size:13px;margin-top:6px}
+/* svg */
+.cz{fill:none;stroke:var(--ln);stroke-width:2}.cz1{fill:#e4e3dd}
+.dim{opacity:.3}.vis{stroke:#3d6b66;stroke-width:2}
+.cur{fill:none;stroke:var(--ac);stroke-width:6;rx:14}
+.dg{font:700 44px Inter,system-ui,sans-serif;text-anchor:middle}
+.lb{font:600 19px Inter,system-ui,sans-serif;text-anchor:middle;fill:var(--mu)}.lb.pos{fill:var(--ac);font-size:26px}.lb.neg{fill:var(--rd);font-size:26px}.lb.hi{fill:var(--ac)}.lb.bad{fill:var(--rd)}
+.e{stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;animation:dr .5s forwards}
+.e.out{stroke:var(--ac);stroke-width:8}.e.sh{stroke:var(--ac);stroke-width:11;filter:drop-shadow(0 0 6px var(--ac))}
+.e.gone{stroke:#444952;stroke-width:5;stroke-dasharray:6 8;stroke-dashoffset:0;animation:none}
+.e.fl{animation:dr .5s forwards,fl .45s .5s 4}
+@keyframes dr{to{stroke-dashoffset:0}}@keyframes fl{50%{opacity:.1}}
+.ar{stroke:var(--ac2);stroke-width:5;stroke-linecap:round}
+.tr{stroke:#5a5e66;stroke-width:3;stroke-dasharray:3 8;stroke-linecap:round}
+pre{background:#0f1115;border:1px solid var(--ln);border-radius:12px;padding:12px;overflow:auto;font-size:13px;line-height:1.6}
+ol li,ul li{margin:4px 0}details{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:8px 14px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+.big{font-size:clamp(17px,3.8vw,21px);border:1px solid var(--ac);border-radius:14px;padding:14px;background:#0e1f1d}
+code{color:var(--ac)}
+</style></head><body><main>
+<h1>Perimeter of 1s — think it like an interview</h1>
+<p class="sub">Formula baad mein. Pehle observation, phir galti, phir fix.</p>
+<div class="grid">
+ <div class="card"><svg id="stage" viewBox="0 0 400 300" role="img" aria-label="matrix visualization"></svg></div>
+ <div class="card">
+  <div class="cnt"><small>PERIMETER =</small><span id="pv">0</span><span id="dl"></span></div>
+  <div id="txt"></div><div id="note"></div>
+  <div class="ctl">
+   <button class="p" id="bS">▶ Start</button><button id="bN">Next Step →</button><button id="bA">▶ Auto Play</button><button id="bR">⟳ Reset</button>
+   <select id="sp" aria-label="speed"><option value="3400">Slow</option><option value="2300" selected>Normal</option><option value="1300">Fast</option></select>
+  </div>
+  <div id="bar"><i></i></div><div id="stp"></div>
+  <div class="ctl"><label for="ex" style="color:var(--mu);font-size:13px;align-self:center">Dry run on:</label>
+   <select id="ex"></select></div>
+ </div>
+</div>
+
+<h2>Interview mode — how I would solve this</h2>
+<div class="card"><ol>
+<li>Ek <code>1</code> ek square hai → 4 sides.</li><li>So every <code>1</code> initially contributes <code>+4</code>.</li><li>Adjacent <code>1</code>s ek side share karte hain.</li><li>Shared side perimeter mein nahi honi chahiye.</li>
+<li>But +4 +4 karte waqt woh side 2 baar count hui.</li><li>Therefore every shared side gives <code>−2</code>.</li><li>Ab shared sides count karni hain.</li>
+<li>All four directions check karenge toh duplicate milega.</li><li>Matrix left-to-right, top-to-bottom traverse ho raha hai.</li><li>Left aur up already visited hain.</li>
+<li>So sirf left aur up check karna hai.</li><li>Right/down miss nahi honge — jab woh cells current honge, tab ye left/up ban chuke honge.</li></ol></div>
+
+<h2>The code</h2>
+<pre>for (int i = 0; i &lt; n; i++)
+  for (int j = 0; j &lt; m; j++)
+    if (mat[i][j] == 1) {
+      ans += 4;                                  // naya square, 4 sides
+      if (i &gt; 0 &amp;&amp; mat[i-1][j] == 1) ans -= 2;   // UP mein 1 → shared side
+      if (j &gt; 0 &amp;&amp; mat[i][j-1] == 1) ans -= 2;   // LEFT mein 1 → shared side
+    }</pre>
+<ul><li><code>i &gt; 0</code>: pehli row ke upar koi cell nahi hota, isliye <code>mat[-1][j]</code> padhna invalid hoga. Guard zaroori hai.</li>
+<li><code>j &gt; 0</code>: pehle column ke left koi cell nahi hota — same reason.</li>
+<li><code>mat[i-1][j]</code> = ek row upar, same column → UP. <code>mat[i][j-1]</code> = same row, ek column peeche → LEFT.</li>
+<li><b>−2 kyun:</b> woh side pehle upar/left wale square ne +4 mein count ki thi, aur ab current ne bhi. Dono counts hatane hain.</li></ul>
+
+<h2>Complexity</h2>
+<div class="card"><b>Time O(n × m):</b> har cell ek baar visit hota hai aur har visit mein sirf 2 fixed checks (left, up) — koi DFS/BFS, koi repeated visit nahi.<br><b>Space O(1):</b> sirf ek integer <code>ans</code>; matrix modify ya copy nahi karte, koi visited array nahi.</div>
+
+<h2>Doubts, cleared</h2>
+<details><summary>Why +4?</summary>Har <code>1</code> ek square hai, aur square ke 4 sides hote hain.</details>
+<details><summary>Why −2?</summary>Ek common side dono squares ke +4 mein ek-ek baar count hui = 2 counts. Woh internal hai, dono hatao.</details>
+<details><summary>Why not check all four neighbours?</summary>Same shared side dono cells se discover hogi → duplicate. Humein har side ek hi baar chahiye.</details>
+<details><summary>Why only LEFT and UP?</summary>Left-to-right, top-to-bottom traversal mein yahi do neighbours already visited hote hain.</details>
+<details><summary>Won't we miss RIGHT? DOWN?</summary>Jab right cell current hoga, pichla cell uska LEFT hai. Jab bottom cell current hoga, pichla cell uska UP hai. Side tab detect hogi — exactly once.</details>
+<details><summary>Multiple separate figures?</summary>Har <code>1</code> independently +4; sirf real shared side −2. Figures connected hon ya nahi, farak nahi padta.</details>
+<details><summary>Do I need DFS/BFS?</summary>Nahi. Sirf local neighbour checks during normal traversal.</details>
+
+<h2>Final takeaway</h2>
+<div class="big">Har <code>1</code> ko ek square samjho. Pehle uske 4 sides count karo. Jo side kisi neighbouring <code>1</code> ke saath share ho rahi hai, woh internal hai — aur woh 2 baar count hui thi. Bas uske 2 counts hata do.<br><br><b>+4 for every 1 · −2 for every shared side · Left + Up</b> (kyunki baaki directions baad mein khud left/up ban jaati hain).</div>
+</main>
+<script>
+// ---------- STATE ----------
+const S1=[[1]],S2=[[1,1]],S5=[[1],[1]],S3=[[0,1,0,0],[1,1,1,0],[0,1,0,0]],S4=[[1,1,0],[1,1,1],[0,1,0]];
+const EX=[[0,1,0],[1,1,1],[0,0,0]];
+const CASES=[["Example (0 1 0 / 1 1 1 / 0 0 0)",EX,"10"],["Edge: single 1",[[1]],"4"],["Edge: 1 1",[[1,1]],"6"],["Edge: diagonal 1 0 / 0 1",[[1,0],[0,1]],"8"],["Edge: 2×2 all ones",[[1,1],[1,1]],"8"],["Edge: all zeros",[[0,0],[0,0]],"0"],["Mixed figures",[[1,1,0,0,1],[1,1,0,1,1],[0,0,0,1,0]],""],["Disconnected figures",[[1,0,0,1],[0,0,0,0],[1,1,0,0]],""]];
+const st={idx:-1,steps:[],story:0,prev:0,auto:null,caseIdx:0};
+const $=id=>document.getElementById(id);
+const sides=(r,c,d=.3)=>["t","r","b","l"].map((s,i)=>({r,c,side:s,k:"out",d:i*d}));
+const T=(t,s,p,n)=>({t,s,p,n});
+// ---------- ALGORITHM ----------
+function brute(M){let q=0;M.forEach((row,r)=>row.forEach((v,c)=>{if(!v)return;[[-1,0],[1,0],[0,-1],[0,1]].forEach(([a,b])=>{if(!(M[r+a]&&M[r+a][c+b]))q++})}));return q}
+function genRun(M){ // calculateContribution: +4 per 1, -2 for LEFT / UP shared sides
+  const out=[],found=[];let p=0;
+  const base=(o)=>Object.assign({m:M,vis:true,showFuture:true,edges:found.slice()},o);
+  out.push(T("Ab dry run: left-to-right, top-to-bottom. Har <b>1</b> par +4, phir sirf <b>left</b> aur <b>up</b> check.",base({}),0));
+  M.forEach((row,r)=>row.forEach((v,c)=>{if(!v)return;
+    p+=4;out.push(T(`(${r},${c}) par 1 mila → <b>+4</b>`,base({cur:[r,c],labels:[{x:c+.5,y:r+.22,t:"+4"}]}),p));
+    const L=c>0&&M[r][c-1]; if(L){found.push({r,c:c-1,side:"r",k:"sh"});p-=2}
+    out.push(T(L?`LEFT (${r},${c-1}) = 1 → shared side mili → <b>−2</b>`:`LEFT mein ${c>0?"0":"cell hi nahi (j = 0)"} → kuch nahi.`,base({cur:[r,c],arrows:[{r,c,d:"l"}],labels:L?[{x:c,y:r+.5,t:"−2"}]:[]}),p));
+    const U=r>0&&M[r-1][c]; if(U){found.push({r:r-1,c,side:"b",k:"sh"});p-=2}
+    out.push(T(U?`UP (${r-1},${c}) = 1 → shared side mili → <b>−2</b>`:`UP mein ${r>0?"0":"cell hi nahi (i = 0)"} → kuch nahi.`,base({cur:[r,c],arrows:[{r,c,d:"u"}],labels:U?[{x:c+.5,y:r,t:"−2"}]:[]}),p))}));
+  const ok=p===brute(M);
+  out.push(T(`Final perimeter = <b>${p}</b> ${ok?"✓ (brute-force count se match)":"✗"}`,base({}),p,ok?"Count every square's 4 sides, phir internal sides hata do.":""));
+  return out}
+const story=[
+T("Ek <b>1</b> = ek square. Agar ek single <b>1</b> hai, iska perimeter kitna? Chaaro sides gino…",{m:S1,edges:sides(0,0),labels:[{x:.5,y:1.45,t:"4 sides = 4"}]},4,"one 1 → one square → 4 sides"),
+T("Ab do <b>1</b>. Har 1 square hai, har square ke 4 sides → pehla obvious idea: <b>+4 aur +4</b>.",{m:S2,labels:[{x:.5,y:-.3,t:"+4"},{x:1.5,y:-.3,t:"+4"}]},8,"first 1 → +4\nsecond 1 → +4\ntotal = 8 …sach mein?"),
+T("Lekin actual perimeter <b>8 nahi</b> hai. Beech ki ek common side dekho.",{m:S2,edges:[{r:0,c:0,side:"r",k:"sh"}],labels:[{x:1,y:1.4,t:"↑ common side"}]},8),
+T("Woh side <b>dono squares ne</b> count kar li thi — ek hi physical side, do baar.",{m:S2,edges:[{r:0,c:0,side:"r",k:"sh fl"}],labels:[{x:.5,y:1.4,t:"left ne count"},{x:1.5,y:1.4,t:"right ne count"}]},8),
+T("Woh internal side perimeter ka part nahi. Dono counts hatao → 8 − 2 = <b>6</b>. Bahar ki 6 sides hi asli perimeter hain.",{m:S2,edges:[...[["t",0],["b",0],["l",0],["t",1],["b",1]].map(([s,c],i)=>({r:0,c,side:s,k:"out",d:i*.2})),{r:0,c:1,side:"r",k:"out",d:1},{r:0,c:0,side:"r",k:"gone"}],labels:[{x:1,y:-.3,t:"8 − 2 = 6"}]},6,"2 counts → −2"),
+T("Toh rule mil gaya — ab yeh formula nahi, observation hai.",{m:S2,edges:[{r:0,c:0,side:"r",k:"sh"}]},6,"Every 1      → +4\nShared side  → −2"),
+T("Achha, shared side mil gayi. Lekin matrix mein kaise pata chalega ki current <b>1</b> ki koi shared side hai?",{m:S1,cur:[0,0],labels:[{x:.5,y:-.35,t:"?"},{x:.5,y:1.45,t:"?"},{x:-.4,y:.55,t:"?"},{x:1.4,y:.55,t:"?"}]},4),
+T("Shared side tabhi hogi jab neighbour mein bhi <b>1</b> ho. Toh current 1 ke neighbours check karne padenge: up, down, left, right.",{m:S1,cur:[0,0],arrows:["u","d","l","r"].map(d=>({r:0,c:0,d})),labels:[{x:.5,y:-.35,t:"UP"},{x:.5,y:1.45,t:"DOWN"},{x:-.4,y:.55,t:"LEFT"},{x:1.4,y:.55,t:"RIGHT"}]},4),
+T("Test karte hain. Left cell current hai, <b>RIGHT</b> check kiya → 1 mila → shared side found.",{m:S2,cur:[0,0],arrows:[{r:0,c:0,d:"r"}],edges:[{r:0,c:0,side:"r",k:"sh"}],labels:[{x:1,y:1.4,t:"shared side found"}]},8),
+T("Ab doosra cell current. <b>LEFT</b> check kiya → <b>exact wahi side</b> phir mil gayi.",{m:S2,cur:[0,1],arrows:[{r:0,c:1,d:"l"}],edges:[{r:0,c:0,side:"r",k:"sh fl"}],labels:[{x:1,y:1.4,t:"same side again"}]},8),
+T("Same physical side → do baar count ❌. Mujhe har shared side sirf <b>ek baar</b> count karni hai. Duplicate kaise avoid karun?",{m:S2,edges:[{r:0,c:0,side:"r",k:"sh fl"}],labels:[{x:1,y:1.4,t:"counted twice ❌",c:"bad"}]},8),
+T("Hint: main matrix ko normally traverse hi toh kar raha hoon — <b>left → right</b>, phir next row.",{m:S3,cur:[0,2],vis:true,trail:[[0,0],[0,1],[0,2]]},0),
+T("…phir <b>top → bottom</b>. Yeh order fixed hai.",{m:S3,cur:[1,1],vis:true,trail:[[0,0],[0,1],[0,2],[0,3],[1,0],[1,1]]},0),
+T("Ek cell par ruko. <b>LEFT</b> aur <b>UP</b> main already dekh chuka hoon (✓). <b>RIGHT</b> aur <b>DOWN</b> ki abhi baari hi nahi aayi.",{m:S4,cur:[1,1],vis:true,showFuture:true,labels:[{x:.5,y:1.85,t:"✓ left"},{x:1.5,y:.85,t:"✓ up"},{x:2.5,y:1.85,t:"future"},{x:1.5,y:2.85,t:"future"}]},0),
+T("Toh sirf unhi cells ko check karte hain jo already visited hain — natural consequence, arbitrary rule nahi.",{m:S4,cur:[1,1],vis:true,showFuture:true,arrows:[{r:1,c:1,d:"l"},{r:1,c:1,d:"u"}],labels:[{x:1.5,y:3.4,t:"CHECK:  ← LEFT   ↑ UP"}]},0),
+T("Doubt: <b>right miss</b> toh nahi hoga? A par B (right) check nahi karte…",{m:S2,cur:[0,0],showFuture:true,vis:true,labels:[{x:.5,y:1.4,t:"A: right check nahi"}]},4),
+T("…lekin B current banega toh A uska <b>LEFT</b> hai. Side detect hui — exactly once ✓",{m:S2,cur:[0,1],vis:true,arrows:[{r:0,c:1,d:"l"}],edges:[{r:0,c:0,side:"r",k:"sh"}],labels:[{x:1.5,y:1.4,t:"B: left ✓"}]},6),
+T("Doubt: <b>down miss</b>? A par B (neeche) check nahi karte…",{m:S5,cur:[0,0],showFuture:true,vis:true,labels:[{x:1.45,y:.5,t:"A: down check nahi"}]},4),
+T("…lekin B current banega toh A uska <b>UP</b> hai. Side detect hui — exactly once ✓",{m:S5,cur:[1,0],vis:true,arrows:[{r:1,c:0,d:"u"}],edges:[{r:0,c:0,side:"b",k:"sh"}],labels:[{x:1.45,y:1.5,t:"B: up ✓"}]},6),
+T("Figures alag-alag bhi ho sakti hain — koi problem nahi. Har 1 apna +4 laata hai, sirf real shared side −2. DFS/BFS ki zarurat nahi.",{m:[[1,0,0,1],[0,0,0,0],[1,1,0,0]]},0,"Local neighbour checks kaafi hain."),
+T("Ab hi formula reveal: <b>4 × (#1s) − 2 × (#shared sides)</b>. Implementation: har 1 par +4, left == 1 → −2, up == 1 → −2.",{m:EX},10,"PERIMETER = 4 × ones − 2 × shared\n\nans += 4\nif left == 1 → ans -= 2\nif up   == 1 → ans -= 2")];
+// ---------- RENDER ----------
+function renderMatrix(s){
+  const M=s.m,n=M.length,w=M[0].length,S=100,P=70,idx=(r,c)=>r*w+c,ci=s.cur?idx(...s.cur):-1;
+  let h="";const ctr=(r,c)=>[P+c*S+S/2,P+r*S+S/2];
+  M.forEach((row,r)=>row.forEach((v,c)=>{
+    const x=P+c*S+5,y=P+r*S+5,fut=s.showFuture&&ci>=0&&idx(r,c)>ci,vis=s.vis&&ci>=0&&idx(r,c)<ci;
+    h+=`<g class="${fut?"dim":""}"><rect x="${x}" y="${y}" width="${S-10}" height="${S-10}" rx="10" class="${v?"cz1":"cz"} ${vis&&v?"vis":""}"/><text class="dg" x="${x+45}" y="${y+60}" fill="${v?"#0b0c0f":"#4a4e55"}">${v}</text>${vis&&v?`<text x="${x+78}" y="${y+22}" fill="#0f766e" font-size="17" font-weight="700">✓</text>`:""}</g>`}));
+  if(s.trail)for(let i=1;i<s.trail.length;i++){const[a,b]=[ctr(...s.trail[i-1]),ctr(...s.trail[i])];h+=`<line class="tr" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`}
+  if(s.cur){const[x,y]=ctr(...s.cur);h+=`<rect class="cur" x="${x-S/2+1}" y="${y-S/2+1}" width="${S-2}" height="${S-2}"/>`}
+  (s.edges||[]).forEach(e=>{const x=P+e.c*S+5,y=P+e.r*S+5,X=x+S-10,Y=y+S-10,gx=P+e.c*S,gy=P+e.r*S;
+    const q={t:[x,gy,X,gy],b:[x,gy+S,X,gy+S],l:[gx,y,gx,Y],r:[gx+S,y,gx+S,Y]}[e.side];
+    h+=`<line class="e ${e.k}" pathLength="100" x1="${q[0]}" y1="${q[1]}" x2="${q[2]}" y2="${q[3]}" style="animation-delay:${e.d||0}s"/>`});
+  (s.arrows||[]).forEach(a=>{const d=typeof a==="string"?a:a.d,r=a.r??0,c=a.c??0,[dx,dy]={l:[-1,0],r:[1,0],u:[0,-1],d:[0,1]}[d],[cx,cy]=ctr(r,c),
+    x1=cx+dx*30,y1=cy+dy*30,x2=cx+dx*(S*.88),y2=cy+dy*(S*.88),nx=-dy,ny=dx;
+    h+=`<line class="ar" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><polygon fill="#14b8a6" points="${x2+dx*5},${y2+dy*5} ${x2-dx*13+nx*9},${y2-dy*13+ny*9} ${x2-dx*13-nx*9},${y2-dy*13-ny*9}"/>`});
+  (s.labels||[]).forEach(l=>{const cls=l.c||(l.t[0]==="+"?"pos":l.t[0]==="−"?"neg":/✓|found|CHECK|=/.test(l.t)?"hi":"");
+    h+=`<text class="lb ${cls}" x="${P+l.x*S}" y="${P+l.y*S}">${l.t}</text>`});
+  const st_=$("stage");st_.setAttribute("viewBox",`0 0 ${w*S+2*P} ${n*S+2*P}`);st_.innerHTML=h}
+function updateCounter(v){const el=$("pv"),d=v-st.prev;el.textContent=v;
+  if(d){el.classList.add("b");setTimeout(()=>el.classList.remove("b"),250);const dl=$("dl");dl.textContent=(d>0?"+":"−")+Math.abs(d);dl.style.color=d>0?"var(--ac)":"var(--rd)";dl.classList.add("s");setTimeout(()=>dl.classList.remove("s"),900)}
+  st.prev=v}
+function updateExplanation(t,n){$("txt").innerHTML=t;const e=$("note");e.style.display=n?"block":"none";e.textContent=n||""}
+function show(i){st.idx=i;const sp=i<0?{t:"Problem: binary matrix mein saari <b>1</b>s se bani figures ka total perimeter. Ek <b>1</b> = ek square. Formula nahi — discover karte hain. <b>Start</b> dabao.",s:{m:EX},p:0}:st.steps[i];
+  renderMatrix(sp.s);updateCounter(sp.p);updateExplanation(sp.t,sp.n);
+  $("stp").textContent=i<0?"Ready":`Step ${i+1} / ${st.steps.length}`;$("bar").firstChild.style.width=(i<0?0:(i+1)/st.steps.length*100)+"%"}
+// ---------- INTERACTION ----------
+function buildSteps(){st.steps=story.concat(genRun(CASES[st.caseIdx][1]))}
+function stopAuto(){clearTimeout(st.auto);st.auto=null;$("bA").textContent="▶ Auto Play"}
+function nextStep(){if(st.idx<st.steps.length-1)show(st.idx+1);else stopAuto()}
+function startVisualization(){stopAuto();show(0)}
+function resetVisualization(){stopAuto();st.prev=0;show(-1)}
+function tick(){if(!st.auto)return;if(st.idx>=st.steps.length-1){stopAuto();return}nextStep();st.auto=setTimeout(tick,+$("sp").value)}
+function toggleAuto(){if(st.auto){stopAuto();return}$("bA").textContent="⏸ Pause";if(st.idx<0||st.idx>=st.steps.length-1)show(0);st.auto=setTimeout(tick,+$("sp").value)}
+CASES.forEach((c,i)=>$("ex").add(new Option(c[0],i)));
+$("ex").onchange=e=>{stopAuto();st.caseIdx=+e.target.value;buildSteps();show(story.length)};
+$("bS").onclick=startVisualization;$("bN").onclick=()=>{stopAuto();nextStep()};$("bA").onclick=toggleAuto;$("bR").onclick=resetVisualization;
+buildSteps();show(-1);
+</script></body></html>
